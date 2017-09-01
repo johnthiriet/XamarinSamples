@@ -1,0 +1,81 @@
+﻿using FromCoreToRenderer.Controls;
+using UIKit;
+using Xamarin.Forms;
+using Xamarin.Forms.Platform.iOS;
+
+[assembly: ExportRenderer(typeof(MyCustomLabel), typeof(FromCoreToRenderer.iOS.Renderers.MyCustomLabelRenderer))]
+
+namespace FromCoreToRenderer.iOS.Renderers
+{
+    public class MyCustomLabelRenderer : LabelRenderer
+    {
+        private UILabel _control;
+
+        protected override void OnElementChanged(ElementChangedEventArgs<Xamarin.Forms.Label> e)
+        {
+            base.OnElementChanged(e);
+
+            if (Control != null)
+            {
+                if (_control == null)
+
+                    SubscribeToColorChanged();
+                _control = Control;
+            }
+            else
+            {
+                if (_control != null)
+                {
+                    UnsubscribeFromColorChanged();
+                    _control = null;
+                }
+            }
+        }
+
+        private void SubscribeToColorChanged()
+        {
+            // With event
+            ((MyCustomLabel)Element).ColorChanged += OnColorChanged;
+
+            // With message
+            MessagingCenter.Subscribe<MyCustomLabel, Color>(this, MyCustomLabel.ColorChangedMessageName, OnColorChangedMessage);
+        }
+
+        private void UnsubscribeFromColorChanged()
+        {
+            // With event
+            ((MyCustomLabel)Element).ColorChanged -= OnColorChanged;
+
+            // With message
+            MessagingCenter.Unsubscribe<MyCustomLabel, Color>(this, MyCustomLabel.ColorChangedMessageName);
+        }
+
+        private void OnColorChanged(object sender, Color args)
+        {
+            ChangeColor(args);
+        }
+
+        private void OnColorChangedMessage(MyCustomLabel sender, Color color)
+        {
+            ChangeColor(color);
+        }
+
+        private void ChangeColor(Color color)
+        {
+            var nativeColor = color.ToUIColor();
+            if (_control != null)
+                _control.TextColor = nativeColor;
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                UnsubscribeFromColorChanged();
+                _control = null;
+            }
+
+            base.Dispose(disposing);
+        }
+    }
+}
