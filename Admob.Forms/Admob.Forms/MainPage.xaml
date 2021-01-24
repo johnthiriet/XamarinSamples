@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:controls="clr-namespace:Admob.Forms.Controls"
+             x:Class="Admob.Forms.MainPage">
+
+    <Grid RowDefinitions="*, Auto">
+        <Label Text="Hello !" HorizontalOptions="Center" VerticalOptions="Center" />
+        <controls:AdControlView Grid.Row="1" x:Name="adControl" />
+    </Grid>
+
+</ContentPage>
